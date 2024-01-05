@@ -4,10 +4,6 @@ package com.example.foodlog.domain.food.entity;
 import com.example.foodlog.global.common.entity.BaseTimeEntity;
 import jakarta.persistence.*;
 import lombok.*;
-import org.jetbrains.annotations.Nullable;
-
-import java.util.ArrayList;
-import java.util.List;
 
 @Entity
 @Getter
@@ -20,13 +16,6 @@ public class Food extends BaseTimeEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "FOOD_ID")
     private Long id;
-
-    /**
-     * 유튜버 명/음식점 명으로 중복값 방지
-     */
-    @Column(nullable = false, unique = true)
-    private String uniqueName;
-
     /**
      * 음식점 명
      */
@@ -50,18 +39,6 @@ public class Food extends BaseTimeEntity {
      */
     @Column(length = 300,nullable = false)
     private String address;
-
-    /**
-     * 유투버프로필
-     */
-    @Column(length = 300,nullable = false)
-    private String youtuberProfile;
-
-    /**
-     * 유투버 링크
-     */
-    @Column(length = 300,nullable = false)
-    private String youtuberName;
 
     /**
      * 유튜브 링크
@@ -98,7 +75,7 @@ public class Food extends BaseTimeEntity {
      * 별점
      */
     @Column(length = 300,nullable = false)
-    private double rating;
+    private String rating;
 
     /**
      * 대표이미지
@@ -106,4 +83,38 @@ public class Food extends BaseTimeEntity {
     @Column(length = 300,nullable = false)
     private String reprsentativeImage;
 
+    @JoinColumn(name = "YOUTUBER_ID")
+    @ManyToOne(fetch = FetchType.LAZY)
+    private Youtuber youtuber;
+
+    @Builder
+    public Food(String restaurant, String category, String phoneNumber, String address, String youtubeLink, String latitude, String longtitude, String naverLink, Integer totalReview, String rating, String reprsentativeImage, Youtuber youtuber) {
+        this.restaurant = restaurant;
+        this.category = category;
+        this.phoneNumber = phoneNumber;
+        this.address = address;
+        this.youtubeLink = youtubeLink;
+        this.latitude = latitude;
+        this.longtitude = longtitude;
+        this.naverLink = naverLink;
+        this.totalReview = totalReview;
+        this.rating = rating;
+        this.reprsentativeImage = reprsentativeImage;
+        this.youtuber = youtuber;
+    }
+
+    public void createFood(Food food) {
+        this.restaurant = food.getRestaurant();
+        this.category = food.getCategory();
+        this.phoneNumber = food.getPhoneNumber();
+        this.address = food.getAddress();
+        this.youtubeLink = food.getYoutubeLink();
+        this.latitude = food.getLatitude();
+        this.longtitude = food.getLongtitude();
+        this.naverLink = food.getNaverLink();
+        this.totalReview = food.getTotalReview();
+        this.rating = food.getRating();
+        this.reprsentativeImage = food.getReprsentativeImage();
+        this.youtuber = food.getYoutuber();
+    }
 }
