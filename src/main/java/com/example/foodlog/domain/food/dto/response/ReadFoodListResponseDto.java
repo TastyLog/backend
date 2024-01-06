@@ -26,11 +26,14 @@ public class ReadFoodListResponseDto {
     private Integer totalReviews;
     private String rating;
     private String representativeImage;
+    private Long youtuberId;
+    private String channelId;
     private String distance;
+
 
     @Builder
     public ReadFoodListResponseDto(Food food,double  distance) {
-        this.uniqueKey = food.getYoutuber()+"/"+food.getRestaurant();
+        this.uniqueKey = food.getYoutuber().getYoutuberName()+"/"+food.getRestaurant();
         this.restaurantName=food.getRestaurant();
         this.category=food.getCategory();
         this.phoneNumber=food.getPhoneNumber();
@@ -43,7 +46,9 @@ public class ReadFoodListResponseDto {
         this.naverLink=food.getNaverLink();
         this.totalReviews=food.getTotalReview();
         this.rating=food.getRating();
+        this.youtuberId=food.getYoutuber().getId();
         this.representativeImage=food.getReprsentativeImage();
+        this.channelId=food.getYoutuber().getChannelId();
         if(1000<=distance){
             distance=distance/1000;
             distance = Math.round(distance * 100.0) / 100.0;

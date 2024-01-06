@@ -1,9 +1,13 @@
 package com.example.foodlog.domain.food.service.impl;
 
+import com.example.foodlog.domain.food.dto.FoodSearchCondition;
 import com.example.foodlog.domain.food.dto.response.ReadFoodListResponseDto;
 import com.example.foodlog.domain.food.entity.Food;
+import com.example.foodlog.domain.food.entity.Youtuber;
 import com.example.foodlog.domain.food.repository.FoodRepository;
+import com.example.foodlog.domain.food.repository.YoutuberRepository;
 import com.example.foodlog.domain.food.service.FoodService;
+import com.example.foodlog.global.exception.error.YoutuberNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -27,9 +31,9 @@ public class FoodServiceImpl implements FoodService {
     private final FoodRepository foodRepository;
 
     @Override
-    public Page<ReadFoodListResponseDto> readAllList(String latitude,String longitude, Pageable pageable) {
+    public Page<ReadFoodListResponseDto> readAllList(String latitude, String longitude, Pageable pageable, FoodSearchCondition foodSearchCondition) {
 
-        Page<Food> foods = foodRepository.readFoodList(pageable);
+        Page<Food> foods = foodRepository.readFoodList(pageable,foodSearchCondition);
         if(pageable.getSort()==Sort.unsorted()){
             return getFoodListUnsorted(latitude, longitude, pageable, foods);
         }else{

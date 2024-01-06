@@ -1,6 +1,7 @@
 package com.example.foodlog.domain.food.controller;
 
 
+import com.example.foodlog.domain.food.dto.FoodSearchCondition;
 import com.example.foodlog.domain.food.dto.response.ReadFoodListResponseDto;
 import com.example.foodlog.domain.food.service.FoodService;
 import com.example.foodlog.global.common.dto.CommonResDto;
@@ -24,13 +25,13 @@ public class FoodController {
     private final FoodService foodService;
 
     @GetMapping("/{latitube}/{longtitude}")
-    public ResponseEntity<CommonResDto<?>> readAllList(@PathVariable(name="latitube") String latitube,
-                                                       @PathVariable(name="longtitude") String longtitude,
-                                                       Pageable pageable){
-        Page<ReadFoodListResponseDto> result = foodService.readAllList(latitube, longtitude, pageable);
+    public ResponseEntity<CommonResDto<?>> readAllList(
+                                                        FoodSearchCondition foodSearchCondition,
+                                                        @PathVariable(name="latitube") String latitube,
+                                                        @PathVariable(name="longtitude") String longtitude,
+                                                        Pageable pageable){
+        Page<ReadFoodListResponseDto> result = foodService.readAllList(latitube, longtitude, pageable,foodSearchCondition);
         return ResponseEntity.status(HttpStatus.OK).body(new CommonResDto<>(1,"foodList동적조회 성공",result));
     }
-
-
 
 }

@@ -22,6 +22,7 @@ public class Youtuber extends BaseTimeEntity {
     /**
      * ChannelId
      */
+    @Column(length = 300,nullable = false, unique = true)
     private String channelId;
 
     /**
