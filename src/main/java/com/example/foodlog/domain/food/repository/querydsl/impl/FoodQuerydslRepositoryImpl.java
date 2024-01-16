@@ -19,9 +19,7 @@ import org.springframework.data.support.PageableExecutionUtils;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import java.util.function.Supplier;
-import java.util.stream.Stream;
 
 import static com.example.foodlog.domain.food.entity.QFood.*;
 
@@ -36,14 +34,14 @@ public class FoodQuerydslRepositoryImpl implements FoodQuerydslRepository  {
     public Page<Food> readFoodList(Pageable pageable, FoodSearchCondition foodSearchCondition) {
         JPAQuery<Food> contentQuery = new JPAQueryFactory(entityManager).
                 selectFrom(food)
-                .where(yotuberEq(foodSearchCondition.getYoutuberId()))
+                .where(youtuberEq(foodSearchCondition.getYoutuberId()))
                 .orderBy(getOrderSpecifier(pageable.getSort()).stream().toArray(OrderSpecifier[]::new))
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize());
 
         JPAQuery<Long> countQuery = new JPAQueryFactory(entityManager)
                 .select(food.count())
-                .where(yotuberEq(foodSearchCondition.getYoutuberId()))
+                .where(youtuberEq(foodSearchCondition.getYoutuberId()))
                 .from(food);
 
         return PageableExecutionUtils.getPage(contentQuery.fetch(),pageable, () -> countQuery.fetch().size());
@@ -52,8 +50,10 @@ public class FoodQuerydslRepositoryImpl implements FoodQuerydslRepository  {
     /**
      * 유튜버Id 통한 동적검색
      */
-    BooleanBuilder yotuberEq(Long youtuberId) {
-        return nullSafeBuilder(() -> food.youtuber.id.eq(youtuberId));
+    BooleanBuilder youtuberEq(List<Long> youtuberIds) {
+        return new BooleanBuilder().andAnyOf(youtuberIds.stream()
+                .map(youtuberId -> food.youtuber.id.eq(youtuberId))
+                .toArray(BooleanExpression[]::new));
     }
 
 

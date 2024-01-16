@@ -28,7 +28,7 @@ CREATE TABLE `food` (
   `food_id` bigint NOT NULL AUTO_INCREMENT,
   `updated_at` datetime(6) DEFAULT NULL,
   `youtuber_id` bigint DEFAULT NULL,
-  `address` varchar(300) NOT NULL,
+  `address` vargchar(300) NOT NULL,
   `category` varchar(300) NOT NULL,
   `latitude` varchar(300) NOT NULL,
   `longtitude` varchar(300) NOT NULL,
