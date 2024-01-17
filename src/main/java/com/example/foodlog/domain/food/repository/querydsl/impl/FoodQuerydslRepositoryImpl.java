@@ -2,11 +2,14 @@ package com.example.foodlog.domain.food.repository.querydsl.impl;
 
 import com.example.foodlog.domain.food.dto.FoodSearchCondition;
 import com.example.foodlog.domain.food.entity.Food;
+import com.example.foodlog.domain.food.entity.QFood;
 import com.example.foodlog.domain.food.repository.querydsl.FoodQuerydslRepository;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.Order;
 import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.dsl.BooleanExpression;
+import com.querydsl.core.types.dsl.Expressions;
+import com.querydsl.core.types.dsl.NumberTemplate;
 import com.querydsl.core.types.dsl.PathBuilder;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
@@ -20,6 +23,7 @@ import org.springframework.data.support.PageableExecutionUtils;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Supplier;
+import java.util.stream.Collectors;
 
 import static com.example.foodlog.domain.food.entity.QFood.*;
 
@@ -47,14 +51,43 @@ public class FoodQuerydslRepositoryImpl implements FoodQuerydslRepository  {
         return PageableExecutionUtils.getPage(contentQuery.fetch(),pageable, () -> countQuery.fetch().size());
     }
 
+    @Override
+    public Page<Food> readClosestFoodList(Pageable pageable, FoodSearchCondition foodSearchCondition, String latitude, String longitude) {
+        JPAQuery<Food> contentQuery = new JPAQueryFactory(entityManager)
+                .select(food)
+                .from(food)
+                .orderBy(Expressions.stringTemplate("ST_Distance_Sphere({0}, {1})",
+                                Expressions.stringTemplate("POINT({0}, {1})",
+                                        longitude,
+                                        latitude
+                                ),
+                                Expressions.stringTemplate("POINT({0}, {1})",
+                                        food.longtitude,
+                                        food.latitude
+                                )
+                        ).asc())
+                .where(youtuberEq(foodSearchCondition.getYoutuberId()))
+                .offset(pageable.getOffset())
+                .limit(pageable.getPageSize());
+
+
+        JPAQuery<Long> countQuery = new JPAQueryFactory(entityManager)
+                .select(food.count())
+                .where(youtuberEq(foodSearchCondition.getYoutuberId()))
+                .from(food);
+
+        return PageableExecutionUtils.getPage(contentQuery.fetch(),pageable, () -> countQuery.fetch().size());
+    }
+
     /**
      * 유튜버Id 통한 동적검색
      */
     BooleanBuilder youtuberEq(List<Long> youtuberIds) {
-        return new BooleanBuilder().andAnyOf(youtuberIds.stream()
+        return youtuberIds==null ?  null : new BooleanBuilder().andAnyOf(youtuberIds.stream()
                 .map(youtuberId -> food.youtuber.id.eq(youtuberId))
                 .toArray(BooleanExpression[]::new));
     }
+
 
 
 
