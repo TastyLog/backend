@@ -4,6 +4,7 @@ package com.example.foodlog.domain.food.entity;
 import com.example.foodlog.global.common.entity.BaseTimeEntity;
 import jakarta.persistence.*;
 import lombok.*;
+import org.springframework.data.geo.Point;
 
 @Entity
 @Getter
@@ -86,6 +87,8 @@ public class Food extends BaseTimeEntity {
     @JoinColumn(name = "YOUTUBER_ID")
     @ManyToOne(fetch = FetchType.LAZY)
     private Youtuber youtuber;
+
+//    private Point location;
 
     @Builder
     public Food(String restaurant, String category, String phoneNumber, String address, String youtubeLink, String latitude, String longtitude, String naverLink, Integer totalReview, String rating, String reprsentativeImage, Youtuber youtuber) {

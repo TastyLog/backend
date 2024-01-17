@@ -7,4 +7,5 @@ import org.springframework.data.domain.Pageable;
 
 public interface FoodQuerydslRepository {
     Page<Food> readFoodList(Pageable pageable, FoodSearchCondition foodSearchCondition);
+    Page<Food> readClosestFoodList(Pageable pageable, FoodSearchCondition foodSearchCondition,String latitude, String longitude);
 }

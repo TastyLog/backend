@@ -33,12 +33,12 @@ public class FoodServiceImpl implements FoodService {
     @Override
     public Page<ReadFoodListResponseDto> readAllList(String latitude, String longitude, Pageable pageable, FoodSearchCondition foodSearchCondition) {
 
-        Page<Food> foods = foodRepository.readFoodList(pageable,foodSearchCondition);
         if(pageable.getSort()==Sort.unsorted()){
+            Page<Food> foods = foodRepository.readClosestFoodList(pageable,foodSearchCondition,latitude,longitude);
             return getFoodListUnsorted(latitude, longitude, pageable, foods);
         }else{
+            Page<Food> foods = foodRepository.readFoodList(pageable,foodSearchCondition);
             return getFoodListSorted(latitude, longitude, pageable, foods);
-
         }
 
     }
