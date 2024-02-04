@@ -26,6 +26,7 @@ import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 import static com.example.foodlog.domain.food.entity.QFood.*;
+import static org.springframework.util.StringUtils.hasText;
 
 @RequiredArgsConstructor
 public class FoodQuerydslRepositoryImpl implements FoodQuerydslRepository  {
@@ -36,16 +37,20 @@ public class FoodQuerydslRepositoryImpl implements FoodQuerydslRepository  {
 
     @Override
     public Page<Food> readFoodList(Pageable pageable, FoodSearchCondition foodSearchCondition) {
+
+        String searchWord = foodSearchCondition.getSearchWord();
+        BooleanExpression searchWordExpression = searchWordContains(searchWord);
+
         JPAQuery<Food> contentQuery = new JPAQueryFactory(entityManager).
                 selectFrom(food)
-                .where(youtuberEq(foodSearchCondition.getYoutuberId()))
+                .where(youtuberEq(foodSearchCondition.getYoutuberId()),searchWordExpression)
                 .orderBy(getOrderSpecifier(pageable.getSort()).stream().toArray(OrderSpecifier[]::new))
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize());
 
         JPAQuery<Long> countQuery = new JPAQueryFactory(entityManager)
                 .select(food.count())
-                .where(youtuberEq(foodSearchCondition.getYoutuberId()))
+                .where(youtuberEq(foodSearchCondition.getYoutuberId()),searchWordExpression)
                 .from(food);
 
         return PageableExecutionUtils.getPage(contentQuery.fetch(),pageable, () -> countQuery.fetch().size());
@@ -53,6 +58,10 @@ public class FoodQuerydslRepositoryImpl implements FoodQuerydslRepository  {
 
     @Override
     public Page<Food> readClosestFoodList(Pageable pageable, FoodSearchCondition foodSearchCondition, String latitude, String longitude) {
+
+        String searchWord = foodSearchCondition.getSearchWord();
+        BooleanExpression searchWordExpression = searchWordContains(searchWord);
+
         JPAQuery<Food> contentQuery = new JPAQueryFactory(entityManager)
                 .select(food)
                 .from(food)
@@ -66,17 +75,34 @@ public class FoodQuerydslRepositoryImpl implements FoodQuerydslRepository  {
                                         food.latitude
                                 )
                         ).asc())
-                .where(youtuberEq(foodSearchCondition.getYoutuberId()))
+                .where(youtuberEq(foodSearchCondition.getYoutuberId()),searchWordExpression)
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize());
 
 
         JPAQuery<Long> countQuery = new JPAQueryFactory(entityManager)
                 .select(food.count())
-                .where(youtuberEq(foodSearchCondition.getYoutuberId()))
+                .where(youtuberEq(foodSearchCondition.getYoutuberId()),searchWordExpression)
                 .from(food);
 
         return PageableExecutionUtils.getPage(contentQuery.fetch(),pageable, () -> countQuery.fetch().size());
+    }
+
+
+
+
+    /**
+     * like함수를 통한 음식점 검색
+     */
+    private BooleanExpression searchWordContains(String searchWord) {
+        BooleanExpression result = null;
+        if (searchWord != null) {
+                BooleanExpression includeRestaurant = food.restaurant.like("%" + searchWord + "%"); // restaurant 포함
+                BooleanExpression includeAddress = food.address.like("%"+searchWord+"%"); // address 포함
+                BooleanExpression includeCategory = food.category.like("%"+searchWord+"%"); // category 포함
+            result = includeRestaurant.or(includeAddress).or(includeCategory);
+        }
+        return result;
     }
 
     /**

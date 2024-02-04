@@ -10,4 +10,5 @@ import java.util.List;
 @AllArgsConstructor
 public class FoodSearchCondition {
     private List<Long> youtuberId;
+    private String searchWord;
 }
