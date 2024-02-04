@@ -23,9 +23,10 @@ spring:
       mode: always
       schema-locations: classpath:/db/data.sql
 
-
-
-
+fcm:
+  key:
+    path: firebase/tastylog-353f1-firebase-adminsdk-444sl-674cd6dd67.json
+    scope: https://fcm.googleapis.com/v1/projects/tastylog-353f1/messages:send
 
 
 
