@@ -8,7 +8,6 @@ src/main/resources/firebase/**
 
 src/main/generated/**
 ### STS ###
-src/main/resources/application.yaml
 .apt_generated
 .classpath
 .factorypath
