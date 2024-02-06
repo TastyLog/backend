@@ -23,10 +23,7 @@ import org.springframework.data.support.PageableExecutionUtils;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Supplier;
-import java.util.stream.Collectors;
-
 import static com.example.foodlog.domain.food.entity.QFood.*;
-import static org.springframework.util.StringUtils.hasText;
 
 @RequiredArgsConstructor
 public class FoodQuerydslRepositoryImpl implements FoodQuerydslRepository  {
