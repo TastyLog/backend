@@ -2,9 +2,9 @@ package com.example.foodlog.domain.food.entity;
 
 
 import com.example.foodlog.global.common.entity.BaseTimeEntity;
-import jakarta.persistence.*;
 import lombok.*;
-import org.springframework.data.geo.Point;
+
+import javax.persistence.*;
 
 @Entity
 @Getter

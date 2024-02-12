@@ -1,4 +1,5 @@
 package com.example.foodlog.domain.notification.service.impl;
+
 import com.example.foodlog.domain.notification.dto.FCMMessageFormatDto;
 import com.example.foodlog.domain.notification.dto.FCMMessageRequestDto;
 import com.example.foodlog.domain.notification.service.NotificationService;

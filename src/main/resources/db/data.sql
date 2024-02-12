@@ -45,4 +45,5 @@ INSERT INTO youtuber (youtuber_name, channel_id,youtuber_profile,created_at,upda
 SELECT '맛있겠다 Yummy','UCQA89gPDjJ-1M1o9bwdGF-g', 'UCQA89gPDjJ-1M1o9bwdGF-g.jpg',CURRENT_TIMESTAMP,CURRENT_TIMESTAMP
     WHERE NOT EXISTS (SELECT 1 FROM youtuber WHERE youtuber_name  = '맛있겠다 Yummy');
 
-
+-- fulltext search ngram parser setting
+ALTER TABLE food ADD FULLTEXT(category,restaurant) WITH PARSER ngram;
