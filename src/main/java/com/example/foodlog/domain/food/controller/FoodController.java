@@ -3,6 +3,7 @@ package com.example.foodlog.domain.food.controller;
 
 import com.example.foodlog.domain.food.dto.FoodSearchCondition;
 import com.example.foodlog.domain.food.dto.response.ReadFoodListResponseDto;
+import com.example.foodlog.domain.food.dto.response.SearchRankListResponseDto;
 import com.example.foodlog.domain.food.service.FoodService;
 import com.example.foodlog.global.common.dto.CommonResDto;
 import lombok.RequiredArgsConstructor;
@@ -15,6 +16,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -31,7 +34,13 @@ public class FoodController {
                                                         @PathVariable(name="longtitude") String longtitude,
                                                         Pageable pageable){
         Page<ReadFoodListResponseDto> result = foodService.readAllList(latitube, longtitude, pageable,foodSearchCondition);
-        return ResponseEntity.status(HttpStatus.OK).body(new CommonResDto<>(1,"foodList동적조회 성공",result));
+        return ResponseEntity.status(HttpStatus.OK).body(new CommonResDto<>(1,"foodList 조회",result));
+    }
+
+    @GetMapping("/search/rank")
+    public ResponseEntity<CommonResDto<?>> searchRankList(){
+        List<SearchRankListResponseDto> result =foodService.searchRankList();
+        return ResponseEntity.status(HttpStatus.OK).body(new CommonResDto<>(1,"인기 검색어 조회",result));
     }
 
 }

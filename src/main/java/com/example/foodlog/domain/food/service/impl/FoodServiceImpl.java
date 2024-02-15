@@ -2,24 +2,25 @@ package com.example.foodlog.domain.food.service.impl;
 
 import com.example.foodlog.domain.food.dto.FoodSearchCondition;
 import com.example.foodlog.domain.food.dto.response.ReadFoodListResponseDto;
+import com.example.foodlog.domain.food.dto.response.SearchRankListResponseDto;
 import com.example.foodlog.domain.food.entity.Food;
-import com.example.foodlog.domain.food.entity.Youtuber;
 import com.example.foodlog.domain.food.repository.FoodRepository;
-import com.example.foodlog.domain.food.repository.YoutuberRepository;
 import com.example.foodlog.domain.food.service.FoodService;
-import com.example.foodlog.global.exception.error.YoutuberNotFoundException;
+import com.example.foodlog.global.redis.util.SearchRedisUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.redis.core.ZSetOperations;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
@@ -29,9 +30,15 @@ import java.util.stream.Collectors;
 public class FoodServiceImpl implements FoodService {
 
     private final FoodRepository foodRepository;
+    private final SearchRedisUtil searchRedisUtil;
 
     @Override
     public Page<ReadFoodListResponseDto> readAllList(String latitude, String longitude, Pageable pageable, FoodSearchCondition foodSearchCondition) {
+
+
+        if(foodSearchCondition.getSearchWord()!=null && !foodSearchCondition.getSearchWord().isEmpty()){
+            searchRedisUtil.incrementSearchKeywordScore(foodSearchCondition.getSearchWord());
+        }
 
         if(pageable.getSort()==Sort.unsorted()){
             Page<Food> foods = foodRepository.readClosestFoodList(pageable,foodSearchCondition,latitude,longitude);
@@ -41,6 +48,15 @@ public class FoodServiceImpl implements FoodService {
             return getFoodListSorted(latitude, longitude, pageable, foods);
         }
 
+    }
+
+    @Override
+    public List<SearchRankListResponseDto> searchRankList() {
+        String key = "ranking";
+        Set<ZSetOperations.TypedTuple<String>> top10PopularKeywords = searchRedisUtil.getTop10PopularKeywords(key);
+
+        List<SearchRankListResponseDto> result = top10PopularKeywords.stream().map(SearchRankListResponseDto::new).collect(Collectors.toList());
+        return result;
     }
 
     private static PageImpl<ReadFoodListResponseDto> getFoodListUnsorted(String latitude, String longitude, Pageable pageable, Page<Food> foods) {

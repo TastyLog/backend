@@ -25,7 +25,6 @@ import java.util.function.Supplier;
 
 import static com.example.foodlog.domain.food.entity.QFood.food;
 
-
 @RequiredArgsConstructor
 public class FoodQuerydslRepositoryImpl implements FoodQuerydslRepository  {
 
@@ -89,6 +88,7 @@ public class FoodQuerydslRepositoryImpl implements FoodQuerydslRepository  {
 
 
 
+
     /**
      * fullTextSearch 함수를 통한 검색기능
      */
@@ -102,6 +102,7 @@ public class FoodQuerydslRepositoryImpl implements FoodQuerydslRepository  {
         return Expressions.numberTemplate(Double.class,
                 "function('matchs', {0}, {1}, {2})", food.category, food.restaurant, keyword).gt(0);
     }
+
 
     /**
      * like함수를 통한 음식점 검색
@@ -132,7 +133,6 @@ public class FoodQuerydslRepositoryImpl implements FoodQuerydslRepository  {
     /**
      * 동적 orderby
      */
-
 
     private List<OrderSpecifier> getOrderSpecifier(Sort sort){
         List<OrderSpecifier> orders=new ArrayList<>();

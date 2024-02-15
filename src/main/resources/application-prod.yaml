@@ -1,4 +1,8 @@
 spring:
+  data:
+    redis:
+      host: foodlog-redis
+      port: 6379
   mvc:
     pathmatch:
       matching-strategy: ant_path_matcher

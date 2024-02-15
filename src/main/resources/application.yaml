@@ -21,13 +21,14 @@ spring:
     defer-datasource-initialization: true
   sql:
     init:
-      mode: always
+#      mode: always
       schema-locations: classpath:/db/data.sql
-
+  data:
+    redis:
+      host: localhost
+      port: 6379
 fcm:
   key:
     path: firebase/tastylog-353f1-firebase-adminsdk-444sl-674cd6dd67.json
     scope: https://fcm.googleapis.com/v1/projects/tastylog-353f1/messages:sends
-
-
 
