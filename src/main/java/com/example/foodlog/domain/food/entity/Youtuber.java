@@ -1,9 +1,9 @@
 package com.example.foodlog.domain.food.entity;
 
 import com.example.foodlog.global.common.entity.BaseTimeEntity;
-import jakarta.persistence.*;
 import lombok.*;
 
+import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
 

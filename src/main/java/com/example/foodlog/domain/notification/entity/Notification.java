@@ -1,7 +1,8 @@
 package com.example.foodlog.domain.notification.entity;
 
-import jakarta.persistence.*;
 import lombok.*;
+
+import javax.persistence.*;
 
 @Entity
 @Getter
