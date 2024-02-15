@@ -12,6 +12,7 @@ import com.querydsl.core.types.dsl.PathBuilder;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -87,19 +88,35 @@ public class FoodQuerydslRepositoryImpl implements FoodQuerydslRepository  {
 
 
 
+
+    /**
+     * fullTextSearch 함수를 통한 검색기능
+     */
+
+    private BooleanExpression searchWordContains(String keyword) {
+        if (StringUtils.isBlank(keyword)) {
+            return null;
+        }
+
+
+        return Expressions.numberTemplate(Double.class,
+                "function('matchs', {0}, {1}, {2})", food.category, food.restaurant, keyword).gt(0);
+    }
+
+
     /**
      * like함수를 통한 음식점 검색
      */
-    private BooleanExpression searchWordContains(String searchWord) {
-        BooleanExpression result = null;
-        if (searchWord != null) {
-                BooleanExpression includeRestaurant = food.restaurant.like("%" + searchWord + "%"); // restaurant 포함
-                BooleanExpression includeAddress = food.address.like("%"+searchWord+"%"); // address 포함
-                BooleanExpression includeCategory = food.category.like("%"+searchWord+"%"); // category 포함
-            result = includeRestaurant.or(includeAddress).or(includeCategory);
-        }
-        return result;
-    }
+//    private BooleanExpression searchWordContains(String searchWord) {
+//        BooleanExpression result = null;
+//        if (searchWord != null) {
+//                BooleanExpression includeRestaurant = food.restaurant.like("%" + searchWord + "%"); // restaurant 포함
+//                BooleanExpression includeAddress = food.address.like("%"+searchWord+"%"); // address 포함
+//                BooleanExpression includeCategory = food.category.like("%"+searchWord+"%"); // category 포함
+//            result = includeRestaurant.or(includeAddress).or(includeCategory);
+//        }
+//        return result;
+//    }
 
     /**
      * 유튜버Id 통한 동적검색
