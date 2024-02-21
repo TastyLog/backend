@@ -21,6 +21,7 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicLong;
 import java.util.stream.Collectors;
 
 @Service
@@ -39,7 +40,6 @@ public class FoodServiceImpl implements FoodService {
         if(foodSearchCondition.getSearchWord()!=null && !foodSearchCondition.getSearchWord().isEmpty()){
             searchRedisUtil.incrementSearchKeywordScore(foodSearchCondition.getSearchWord());
         }
-
         if(pageable.getSort()==Sort.unsorted()){
             Page<Food> foods = foodRepository.readClosestFoodList(pageable,foodSearchCondition,latitude,longitude);
             return getFoodListUnsorted(latitude, longitude, pageable, foods);
@@ -47,7 +47,6 @@ public class FoodServiceImpl implements FoodService {
             Page<Food> foods = foodRepository.readFoodList(pageable,foodSearchCondition);
             return getFoodListSorted(latitude, longitude, pageable, foods);
         }
-
     }
 
     @Override
@@ -55,7 +54,17 @@ public class FoodServiceImpl implements FoodService {
         String key = "ranking";
         Set<ZSetOperations.TypedTuple<String>> top10PopularKeywords = searchRedisUtil.getTop10PopularKeywords(key);
 
-        List<SearchRankListResponseDto> result = top10PopularKeywords.stream().map(SearchRankListResponseDto::new).collect(Collectors.toList());
+
+        // 순위(rank) 추가
+        AtomicLong rank = new AtomicLong(1);
+        List<SearchRankListResponseDto> result = top10PopularKeywords.stream()
+                .map(tuple -> {
+                    String value = tuple.getValue();
+                    Double score = tuple.getScore();
+                    long currentRank = rank.getAndIncrement();
+                    return new SearchRankListResponseDto(currentRank, value, score);
+                })
+                .collect(Collectors.toList());
         return result;
     }
 
@@ -100,7 +109,6 @@ public class FoodServiceImpl implements FoodService {
 
         return new PageImpl<>(result, pageable, foods.getSize());
     }
-
     /**
      * 두 지점간의 거리 계산
      *

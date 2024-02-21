@@ -37,4 +37,12 @@ public class SearchRedisUtil {
             stringRedisTemplate.opsForZSet().add("ranking", stripKeyword, 1);
         }
     }
+
+    /**
+     * redis ranking 키 값을 가진 모든 요소 초기화
+     */
+    public void resetSearchKeywordScores() {
+        stringRedisTemplate.opsForZSet().removeRange("ranking", 0, -1);
+    }
+
 }
