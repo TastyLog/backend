@@ -14,14 +14,14 @@ import org.springframework.data.redis.serializer.StringRedisSerializer;
 @Configuration
 @Profile("prod")
 public class RedisConfig {
-    @Value("${spring.redis.host}")
+    @Value("${spring.data.redis.host}")
     private String host;
 
-    @Value("${spring.redis.port}")
+    @Value("${spring.data.redis.port}")
     private int port;
-
-    @Value("${spring.redis.password}")
-    private String redisPassword;
+//
+//    @Value("${spring.data.redis.password}")
+//    private String redisPassword;
 
     @Bean
     public RedisTemplate<String, Object> redisTemplate() {
@@ -31,13 +31,12 @@ public class RedisConfig {
         redisTemplate.setValueSerializer(new Jackson2JsonRedisSerializer<>(String.class));
         return redisTemplate;
     }
-
     @Bean
     public RedisConnectionFactory redisConnectionFactory() {
         RedisStandaloneConfiguration redisStandaloneConfiguration = new RedisStandaloneConfiguration();
         redisStandaloneConfiguration.setHostName(host);
         redisStandaloneConfiguration.setPort(port);
-        redisStandaloneConfiguration.setPassword(redisPassword);
+//        redisStandaloneConfiguration.setPassword(redisPassword);
         return new LettuceConnectionFactory(redisStandaloneConfiguration);
     }
 }

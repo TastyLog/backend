@@ -2,16 +2,17 @@ package com.example.foodlog.domain.food.dto.response;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.springframework.data.redis.core.ZSetOperations;
 
 @NoArgsConstructor
 @Getter
 public class SearchRankListResponseDto {
     private String keyword;
     private Double score;
+    private Long rank;
 
-    public SearchRankListResponseDto(ZSetOperations.TypedTuple<String> rankingData) {
-        this.keyword = rankingData.getValue();
-        this.score = rankingData.getScore();
+    public SearchRankListResponseDto(long rank,String keyword,Double score) {
+        this.keyword = keyword;
+        this.score = score;
+        this.rank=rank;
     }
 }
