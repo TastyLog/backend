@@ -9,10 +9,12 @@ public class SearchRankListResponseDto {
     private String keyword;
     private Double score;
     private Long rank;
+    private String state;
 
-    public SearchRankListResponseDto(long rank,String keyword,Double score) {
+    public SearchRankListResponseDto(long rank,String keyword,Double score,String state) {
         this.keyword = keyword;
         this.score = score;
         this.rank=rank;
+        this.state=state;
     }
 }

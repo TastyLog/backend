@@ -54,15 +54,15 @@ public class FoodServiceImpl implements FoodService {
         String key = "ranking";
         Set<ZSetOperations.TypedTuple<String>> top10PopularKeywords = searchRedisUtil.getTop10PopularKeywords(key);
 
-
         // 순위(rank) 추가
         AtomicLong rank = new AtomicLong(1);
         List<SearchRankListResponseDto> result = top10PopularKeywords.stream()
                 .map(tuple -> {
                     String value = tuple.getValue();
                     Double score = tuple.getScore();
+                    String state = searchRedisUtil.getState(value);
                     long currentRank = rank.getAndIncrement();
-                    return new SearchRankListResponseDto(currentRank, value, score);
+                    return new SearchRankListResponseDto(currentRank, value, score,state);
                 })
                 .collect(Collectors.toList());
         return result;
